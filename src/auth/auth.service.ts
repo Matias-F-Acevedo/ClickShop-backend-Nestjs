@@ -54,7 +54,7 @@ export class AuthService {
       subject: "Restablecer contraseña de inicio de sesión",
       text: ``,
       html: `<b><h3>Estimado ${user.user_name},</h3></b> <p>Desde <b>ClickShop</b> hemos recibido tu solicitud de restablecimiento de contraseña. Para completar este proceso y recuperar el acceso a tu cuenta, sigue los pasos a continuación:</p>
-      <p> 1. Haz clic en el siguiente enlace para acceder a la página de restablecimiento de contraseña: <a href= "https://www.google.com.ar" target="_blank" >Haz click aquí</a></p>
+      <p> 1. Haz clic en el siguiente enlace para acceder a la página de restablecimiento de contraseña: <a href= "http://localhost:5173/reset-password?token=${user.reset_password_token}" target="_blank" >Haz click aquí</a></p>
       <p>2. Una vez en la página, sigue las instrucciones para crear una nueva contraseña segura.</p>
       <p>3. Después de establecer tu nueva contraseña, podrás iniciar sesión en tu cuenta utilizando las credenciales actualizadas.</p>
       
