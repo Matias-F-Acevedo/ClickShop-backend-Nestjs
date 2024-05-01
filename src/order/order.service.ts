@@ -61,6 +61,17 @@ export class OrderService {
 
   }
 
+  async findAllByUserId(user_id:number): Promise<HttpException | Order[]> {
+    try {
+      const orders = await this.orderRepository.find({
+        where:{user_id: user_id}
+      });
+      return orders;
+    } catch (error) {
+      return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
 
   async update(id: number, updateOrderDto: UpdateOrderDto): Promise<HttpException | Order> {
     try {

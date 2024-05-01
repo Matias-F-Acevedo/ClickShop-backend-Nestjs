@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ParseIntPipe, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ParseIntPipe, HttpException, Query, NotFoundException } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -6,7 +6,7 @@ import { Products } from './entities/product.entity';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Post()
   create(@Body() CreateProductDto: CreateProductDto): Promise<HttpException | Products> {
@@ -14,8 +14,18 @@ export class ProductsController {
   }
 
   @Get()
-    findAllProduct(): Promise<HttpException | Products[]> {
-    return this.productsService.findAllProduct();
+  findAllProduct(@Query('userId') user_id?: number): Promise<HttpException | Products[]> {
+    try {
+      if (!user_id) {
+        return this.productsService.findAllProduct();
+      }
+
+      return this.productsService.findAllByUserId(user_id);
+
+    } catch (error) {
+      throw new NotFoundException("Not found")
+    }
+
   }
 
   @Get(':id_prod')
@@ -29,7 +39,7 @@ export class ProductsController {
   }
 
   @Delete(':id_prod')
-  removeProduct(@Param('id_prod') id: number):Promise<HttpException | Products> {
+  removeProduct(@Param('id_prod') id: number): Promise<HttpException | Products> {
     return this.productsService.removeProduct(id);
   }
 }

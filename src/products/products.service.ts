@@ -70,6 +70,20 @@ export class ProductsService {
 
   }
 
+
+  async findAllByUserId(user_id:number): Promise<HttpException | Products[]> {
+
+    try {
+      const products = await this.productRepository.find({
+        where: { isActive: true, user_id: user_id}
+      })
+      return products;
+    } catch (error) {
+      return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+  }
+
   async updateProduct(id_prod: number, updateProductDto: UpdateProductDto): Promise<HttpException | Products> {
 
 
