@@ -88,6 +88,7 @@ export class UsersService {
       if (!user) {
         return new HttpException('User does not exist', HttpStatus.CONFLICT);
       }
+
       // en las siguentes lines comprueba que al querer actualizar el email, no use uno de otro usuario o el que ya tenia antes.
       if (updateUserDto.user_email) {
         const user = await this.userRepository.findOne({ where: { user_email: updateUserDto.user_email } });
@@ -97,10 +98,6 @@ export class UsersService {
       }
 
       let userUpdate = updateUserDto;
-
-      if (userUpdate.user_password) {
-        userUpdate.user_password = bcrypt.hashSync(updateUserDto.user_password, 8)
-      }
 
       await this.userRepository.update(id, userUpdate);
 
