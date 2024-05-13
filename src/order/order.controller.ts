@@ -3,7 +3,10 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('order')
+@ApiBearerAuth()
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}

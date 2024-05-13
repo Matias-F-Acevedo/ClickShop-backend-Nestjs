@@ -2,7 +2,10 @@ import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, 
 import { CartService } from './cart.service';
 import { Cart } from './entities/cart.entity'; 
 import { UpdateCartDto } from './dto/update-cart.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('carts')
+@ApiBearerAuth()
 @Controller('carts') 
 export class CartController { 
   constructor(private cartService: CartService) {}

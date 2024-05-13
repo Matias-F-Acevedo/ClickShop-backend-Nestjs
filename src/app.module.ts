@@ -39,7 +39,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
     AuthModule,
     OrderModule,
     OrderDetailsModule,
-    ReviewModule, CategoryModule, CartModule, ProductsModule
+    ReviewModule, 
+    CategoryModule, 
+    CartModule, 
+    ProductsModule
   ],
 })
 export class AppModule { }
