@@ -3,11 +3,14 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Products } from './entities/product.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @ApiBearerAuth()
   @Post()
   create(@Body() CreateProductDto: CreateProductDto): Promise<HttpException | Products> {
     return this.productsService.createProduct(CreateProductDto);
@@ -23,11 +26,13 @@ export class ProductsController {
     return this.productsService.findOne(id_prod);
   }
 
+  @ApiBearerAuth()
   @Patch(':id_prod')
   updateProduct(@Param('id_prod') id_prod: number, @Body() updateProductDto: UpdateProductDto): Promise<HttpException | Products> {
     return this.productsService.updateProduct(id_prod, updateProductDto);
   }
 
+  @ApiBearerAuth()
   @Delete(':id_prod')
   removeProduct(@Param('id_prod') id: number):Promise<HttpException | Products> {
     return this.productsService.removeProduct(id);
