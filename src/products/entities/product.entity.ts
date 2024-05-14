@@ -57,8 +57,10 @@ export class Products {
     category: Category;
 
 
-    @ManyToMany(() => Cart, cart => cart.products)
-    carts: Cart[];
+    @ManyToOne(() => Cart, cart => cart.products)
+    @JoinColumn({ name:'id'}) 
+    cart: Cart;
+
 
     @OneToMany(() => Review, review => review.review)
     review: Review[];
