@@ -3,7 +3,7 @@ import { Cart } from "src/cart/entities/cart.entity";
 import { Category } from "src/category/entities/category.entity";
 import { Review } from "src/review/entities/review.entity";
 import { User } from "src/users/entities/user.entity";
-import {Column, Entity, JoinColumn, ManyToMany, ManyToOne,OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {BeforeInsert, Column, Entity, JoinColumn, ManyToMany, ManyToOne,OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 export enum ProductCondition {
@@ -41,6 +41,9 @@ export class Products {
         default: ProductCondition.NEW,
     })
     condition: ProductCondition;
+
+    @Column({ length: 150, default:"default-image-product/default-image-product.jpeg"})
+    product_image: string;
 
     @Column({type: "datetime", default: ()=> "CURRENT_TIMESTAMP"})
     createdAt: Date;
