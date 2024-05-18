@@ -32,6 +32,9 @@ export class User {
     @Column()
     user_password: string;
 
+    @Column({ length: 150, default:"default-image-user/default-image-user.jpg"})
+    user_image: string;
+
     @Column({ type: "datetime", default: () => "CURRENT_TIMESTAMP" })
     user_createdAt: Date;
 
