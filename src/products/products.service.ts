@@ -195,7 +195,7 @@ export class ProductsService {
 
       if (product.product_image == imageDefault) {
         const urlImage = await this.imageService.getPublicUrl(imageDefault);
-        return { productId, urlImage }
+        return { productId, urlImage:[`${urlImage}`] }
       }
 
       const images: string[] = await this.imageService.listFilesInFolder(product.product_image);
