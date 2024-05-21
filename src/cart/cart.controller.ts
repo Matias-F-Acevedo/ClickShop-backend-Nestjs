@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { Cart } from './entities/cart.entity'; 
 import { UpdateCartDto } from './dto/update-cart.dto';
@@ -13,7 +13,6 @@ export class CartController {
 
   @Get()
   getCarts(): Promise<Cart[]> { 
-    
     return this.cartService.getCarts(); 
   }
 
@@ -26,10 +25,10 @@ export class CartController {
     return cart; 
   }
 
-  @Put(':userId/update')
+  @Patch(':userId/update')
   async update(@Param('userId', ParseIntPipe) userId: number, @Body() updateCartDto: UpdateCartDto) {
     try {
-      const updatedCart = await this.cartService.updateCart(userId, updateCartDto.newProductId);
+      const updatedCart = await this.cartService.updateCart(userId, updateCartDto);
       return updatedCart;
     } catch (error) {
       throw new NotFoundException(error.message);

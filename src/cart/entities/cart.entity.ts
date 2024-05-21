@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Products } from 'src/products/entities/product.entity';
+import { Products } from 'src/products/entities/product.entity'; // Renombré la importación a Product para seguir convenciones
 
 @Entity("cart")
 export class Cart {
@@ -8,28 +8,16 @@ export class Cart {
   id: number;
 
   @Column()
-  userId: number; // Esta columna debería almacenar el ID del usuario que posee el carrito
+  userId: number;
 
   @OneToOne(() => User, user => user.cart)
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToMany(() => Products)
-  @JoinTable({
-    name: 'cart_products',
-    joinColumn: {
-      name: 'cartId',
-      referencedColumnName: 'id'
-    },
-    inverseJoinColumn: {
-      name: 'productId',
-      referencedColumnName: 'productId'
-    }
-  })
-  products: Products[];
+  @OneToMany(() => Products, products => products.cart)
+  @JoinColumn({ name: 'productId' })
+  products: Products[]; 
 
   @Column({ default: 0 })
   totalPrice: number; 
-
-  
-} 
+}

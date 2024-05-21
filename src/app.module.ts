@@ -17,6 +17,7 @@ import configuration from 'config/configuration';
 
 @Module({
   imports: [
+
     ConfigModule.forRoot({
       envFilePath: './env/.env',
       load: [configuration],
@@ -59,4 +60,4 @@ import configuration from 'config/configuration';
   ],
 })
 export class AppModule { }
-
+ 
