@@ -22,13 +22,13 @@ import { MailerModule } from '@nestjs-modules/mailer';
       port: 3306,
       database: "db_clickshop",
       entities: [__dirname + "/**/*.entity{.ts,.js}"],
-      synchronize: false,
+      synchronize: false, 
     }),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
         port:465,
-        secure:true,
+        secure:true,    
         auth: {
           user: 'clickshop836@gmail.com',
           pass: 'iljjujpzwquiwblr',
@@ -43,4 +43,4 @@ import { MailerModule } from '@nestjs-modules/mailer';
   ],
 })
 export class AppModule { }
-
+ 

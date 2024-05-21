@@ -21,19 +21,20 @@ export class CartService {
  
   async getCarts() {
     try {
-
-      const carts = await this.cartRepository.find({relations: ["user", "products"]});
-      
+      const carts = await this.cartRepository.find({ relations: ["user", "products"] });
+  
       if (!carts.length) {
-        throw new NotFoundException('No carts found');
+        // En lugar de lanzar una excepción, devuelve un array vacío
+        return [];
       }
-       
+  
       return carts;
     } catch (error) {
       console.log(error)
       throw new HttpException('Internal Server Error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }  
+  }
+  
 
   async getCartById(id: number) {
     const cart = await this.cartRepository.findOne({ where: { id }, relations: ["products", "user"]});
@@ -56,7 +57,6 @@ export class CartService {
       }
   
       const newProduct = await this.productRepository.findOne({ where: { productId: updateCartDto.productId } });
-      console.log(newProduct)
       if (!newProduct) {
         throw new NotFoundException('Product not found');
       }

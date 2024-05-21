@@ -32,14 +32,9 @@ export class ProductsService {
         // Crear el nuevo producto en la base de datos
         const newProduct = this.productRepository.create(createProductDto);
         const savedProduct = await this.productRepository.save(newProduct);
-        console.log("aca estas huevon")
-        console.log("userFound.product:", userFound);
-        console.log("savedProduct:", savedProduct);
 
-        console.log(userFound.product)
         // Actualizar la propiedad product_Id del usuario con el ID del nuevo producto
         userFound.product.push(savedProduct);
-        console.log("userFound con push: ", userFound.product)
         await this.userService.update(userFound.user_id ,userFound);
 
         return savedProduct;
@@ -137,3 +132,4 @@ export class ProductsService {
 
   }
 }
+ 
