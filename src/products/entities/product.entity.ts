@@ -1,9 +1,9 @@
-
-import { Cart } from "src/cart/entities/cart.entity";
+import { CartItems } from "src/cart/entities/cart-items.entity";
 import { Category } from "src/category/entities/category.entity";
+import { OrderDetail } from "src/order-details/entities/order-detail.entity";
 import { Review } from "src/review/entities/review.entity";
 import { User } from "src/users/entities/user.entity";
-import {BeforeInsert, Column, Entity, JoinColumn, ManyToMany, ManyToOne,OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToMany, ManyToOne,OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 export enum ProductCondition {
@@ -59,15 +59,14 @@ export class Products {
     @JoinColumn({ name:'category_id'}) 
     category: Category;
 
-
-    @ManyToOne(() => Cart, cart => cart.products)
-    @JoinColumn({ name:'id'}) 
-    cart: Cart;
-
+    @OneToMany(() => OrderDetail, orderDetail => orderDetail.product)
+    orderDetails: OrderDetail[];
 
     @OneToMany(() => Review, review => review.review)
     review: Review[];
-
+    
+    @OneToMany(() => CartItems, cartItem => cartItem.product)
+    cartItems: CartItems[];
 }
 
 

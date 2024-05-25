@@ -35,6 +35,9 @@ export class User {
     @Column({ length: 150, default:"default-image-user/default-image-user.jpg"})
     user_image: string;
 
+    @Column({ nullable: true })
+    cart_id: number;
+
     @Column({ type: "datetime", default: () => "CURRENT_TIMESTAMP" })
     user_createdAt: Date;
 
@@ -47,9 +50,8 @@ export class User {
     @OneToMany(() => Order, order => order.user, { cascade: ["remove"] })
     orders: Order[];
 
-
-    @OneToOne(() => Cart, cart => cart.user)
-    @JoinColumn()
+    @OneToOne(() => Cart, { cascade: ["remove"] })
+    @JoinColumn({name:"cart_id"})
     cart: Cart;
 
     @OneToMany(() => Review, review => review.review, { cascade: ["remove"] })

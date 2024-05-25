@@ -26,29 +26,18 @@ export class ProductsService {
         if (categoryFound instanceof HttpException) {
             return new HttpException('Category not found', HttpStatus.NOT_FOUND);
         }
-        console.log(createProductDto)
         const userFound = await this.userService.findOne(createProductDto.user_id)
         if (userFound instanceof HttpException) {
             return new HttpException('User not found', HttpStatus.NOT_FOUND);
         }
 
-        // Crear el nuevo producto en la base de datos
-        const newProduct = this.productRepository.create(createProductDto);
-        const savedProduct = await this.productRepository.save(newProduct);
+        const newProduct = this.productRepository.create(createProductDto)
+        const saveProduct = await this.productRepository.save(newProduct)
+        delete (saveProduct).isActive;
+        delete (saveProduct).product_image;
+  
+        return saveProduct;
 
-
-        // Actualizar la propiedad product_Id del usuario con el ID del nuevo producto
-        userFound.product.push(savedProduct);
-        await this.userService.update(userFound.user_id ,userFound);
-
-      const newProduct = this.productRepository.create(createProductDto)
-      const saveProduct = await this.productRepository.save(newProduct)
-      delete (saveProduct).isActive;
-      delete (saveProduct).product_image;
-
-      return saveProduct;
-
-       return savedProduct;
     } catch (error) {
         return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
