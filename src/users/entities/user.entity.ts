@@ -1,4 +1,5 @@
 import { Cart } from "src/cart/entities/cart.entity";
+import { Favorite } from "src/favorites/entities/favorite.entity";
 import { Order } from "src/order/entities/order.entity";
 import { Products } from "src/products/entities/product.entity";
 import { Review } from "src/review/entities/review.entity";
@@ -54,6 +55,9 @@ export class User {
     @JoinColumn({name:"cart_id"})
     cart: Cart;
 
-    @OneToMany(() => Review, review => review.review, { cascade: ["remove"] })
+    @OneToMany(() => Review, review => review.user, { cascade: ["remove"] })
     review: Review[];
+
+    @OneToMany(() => Favorite, favorite => favorite.user, { cascade: ["remove"] })
+    favorites: Favorite[];
 }

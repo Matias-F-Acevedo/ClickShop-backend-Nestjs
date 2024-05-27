@@ -1,5 +1,6 @@
 import { CartItems } from "src/cart/entities/cart-items.entity";
 import { Category } from "src/category/entities/category.entity";
+import { Favorite } from "src/favorites/entities/favorite.entity";
 import { OrderDetail } from "src/order-details/entities/order-detail.entity";
 import { Review } from "src/review/entities/review.entity";
 import { User } from "src/users/entities/user.entity";
@@ -62,11 +63,14 @@ export class Products {
     @OneToMany(() => OrderDetail, orderDetail => orderDetail.product)
     orderDetails: OrderDetail[];
 
-    @OneToMany(() => Review, review => review.review)
+    @OneToMany(() => Review, review => review.product)
     review: Review[];
     
     @OneToMany(() => CartItems, cartItem => cartItem.product)
     cartItems: CartItems[];
+
+    @OneToMany(() => Favorite, favorite => favorite.product)
+    favorites: Favorite[];
 }
 
 

@@ -13,6 +13,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirebaseModule } from './firebase/firebase.module';
 import configuration from 'config/configuration';
 import { CartModule } from './cart/cart.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 
 @Module({
@@ -56,7 +57,7 @@ import { CartModule } from './cart/cart.module';
     AuthModule,
     OrderModule,
     OrderDetailsModule,
-    ReviewModule, CategoryModule,ProductsModule,CartModule,FirebaseModule, ImagesModule
+    ReviewModule, CategoryModule,ProductsModule,CartModule,FirebaseModule, ImagesModule, FavoritesModule
   ],
 })
 export class AppModule { }
