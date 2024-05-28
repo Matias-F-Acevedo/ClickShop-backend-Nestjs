@@ -5,6 +5,7 @@ import { Favorite } from './entities/favorite.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { ProductsService } from 'src/products/products.service';
+import { ImagesService } from 'src/images/images.service';
 
 @Injectable()
 export class FavoritesService {
@@ -12,16 +13,26 @@ export class FavoritesService {
   constructor(@InjectRepository(Favorite) private favoriteRepository: Repository<Favorite>,
     private usersService: UsersService,
     private productsService: ProductsService,
+    private imageService: ImagesService,
 
   ) { }
 
-  async findAllFavorites(userId: number): Promise<HttpException | Favorite[]> {
+  async findAllFavorites(userId: number): Promise<HttpException | any> {
     try {
       const favorites = await this.favoriteRepository.find({
         where: { user_id: userId },
         relations: ['product'],
       });
-      return favorites;
+      const favoritesWithProducts = await Promise.all(favorites.map(async (favorite) => {
+        const product = await this.productsService.findOne(favorite.product_id);
+        if (!(product instanceof HttpException)) {
+          const { product_name, price, description, stock, condition, product_image} = product;
+          return { ...favorite, product: { product_name, price, description, stock, condition, product_image:product_image[0] } };
+      }
+        return favorite;
+    }));
+
+    return favoritesWithProducts;
     } catch (error) {
       return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -59,18 +70,18 @@ export class FavoritesService {
   }
 
 
-  async  removeFavorite(userId: number, productId: number): Promise<HttpException | Favorite> {
+  async removeFavorite(userId: number, productId: number): Promise<HttpException | Favorite> {
 
     try {
       const favorite = await this.favoriteRepository.findOne({
-        where: { product_id:productId, user_id:userId },
+        where: { product_id: productId, user_id: userId },
       });
 
       if (!favorite) {
         return new HttpException('The Favorite does not exist', HttpStatus.NOT_FOUND);
       }
 
-      this.favoriteRepository.delete({ product_id:productId, user_id:userId });
+      this.favoriteRepository.delete({ product_id: productId, user_id: userId });
       return favorite;
 
     } catch (error) {
