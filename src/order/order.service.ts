@@ -64,7 +64,8 @@ export class OrderService {
   async findAllByUserId(user_id:number): Promise<HttpException | Order[]> {
     try {
       const orders = await this.orderRepository.find({
-        where:{user_id: user_id}
+        where:{user_id: user_id},
+        relations: ['orderDetail']
       });
       return orders;
     } catch (error) {

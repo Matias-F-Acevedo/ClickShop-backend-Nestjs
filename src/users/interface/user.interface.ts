@@ -13,4 +13,5 @@ export interface UserInterface {
     user_email: string;
     user_createdAt: Date;
     product: Products[];
+    user_image:string,
 }
