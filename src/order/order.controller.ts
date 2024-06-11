@@ -36,6 +36,17 @@ export class OrderController {
     return this.orderService.findOne(+id);
   }
 
+  @Get('product-owner/:ownerId')
+  async getOrdersForProductOwnerById(@Param('ownerId') ownerId: string) {
+
+      // Llamar al método del servicio para obtener las órdenes
+      const orders = await this.orderService.getOrdersForProductOwnerById(+ownerId);
+      return orders;
+
+      
+  }
+
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<HttpException | Order> {
     return this.orderService.update(+id, updateOrderDto);

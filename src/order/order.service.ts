@@ -36,8 +36,9 @@ export class OrderService {
 
   async findAll(): Promise<HttpException | Order[]> {
     try {
-      const orders = await this.orderRepository.find();
-      return orders;
+      const orders = await this.orderRepository.find({
+        relations: ['orderDetail', 'orderDetail.product', 'user']});
+      return {...orders};
     } catch (error) {
       return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -73,6 +74,39 @@ export class OrderService {
     }
   }
 
+  
+
+  async getOrdersForProductOwnerById(productOwnerId: number) {
+    try {
+      const orders = await this.orderRepository.createQueryBuilder('order')
+        .innerJoinAndSelect('order.orderDetail', 'detail')
+        .innerJoinAndSelect('detail.product', 'product')
+        .innerJoinAndSelect('order.user', 'user')
+        .innerJoin('product.user', 'productUser', 'productUser.user_id = :productOwnerId', { productOwnerId })
+        .getMany();
+      
+        const formattedOrders = orders.map(order => ({
+          ...order,
+          orderDetail: order.orderDetail.map(detail => ({
+            ...detail,
+            product: {
+              product_name: detail.product.product_name,
+              product_image: detail.product.product_image,
+            }
+          })),
+          user: {
+            user_name: order.user.user_name,
+            user_lastname: order.user.user_lastname,
+            user_phoneNumber: order.user.user_phoneNumber,
+            user_address: order.user.user_address,
+            user_identificationNumber: order.user.user_identificationNumber,
+          }
+        }));
+        return formattedOrders;
+    } catch (error) {
+      throw new Error('Error al obtener las órdenes para el propietario del producto');
+    }
+  }
 
   async update(id: number, updateOrderDto: UpdateOrderDto): Promise<HttpException | Order> {
     try {
