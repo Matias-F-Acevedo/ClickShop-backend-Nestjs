@@ -59,6 +59,30 @@ export class ReviewService {
     }
   }
 
+
+  async findAllByProductId(productId: number): Promise<HttpException | any[]> {
+    try {
+
+      const reviews = await this.reviewRepository.find({ where: { product_id: productId }, relations: ["user"] });
+
+
+      const reviewWithUser = await Promise.all(reviews.map(async (review) => {
+        const user= await this.usersService.findOne(review.user_id);
+        if (!(user instanceof HttpException)) {
+          const { user_name, user_lastname, user_image} = user;
+          return { ...review, user: { user_name, user_lastname, user_image } };
+        }
+        return review;
+      }));
+
+      return reviewWithUser;
+
+    } catch (error) {
+      return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+
   async findOne(id: number): Promise<HttpException | Review> {
     try {
       const review = await this.reviewRepository.findOne({

@@ -1,4 +1,5 @@
 import { Cart } from "src/cart/entities/cart.entity";
+import { Favorite } from "src/favorites/entities/favorite.entity";
 import { Order } from "src/order/entities/order.entity";
 import { Products } from "src/products/entities/product.entity";
 import { Review } from "src/review/entities/review.entity";
@@ -32,6 +33,12 @@ export class User {
     @Column()
     user_password: string;
 
+    @Column({ length: 150, default:"default-image-user/default-image-user.jpg"})
+    user_image: string;
+
+    @Column({ nullable: true })
+    cart_id: number;
+
     @Column({ type: "datetime", default: () => "CURRENT_TIMESTAMP" })
     user_createdAt: Date;
 
@@ -44,11 +51,13 @@ export class User {
     @OneToMany(() => Order, order => order.user, { cascade: ["remove"] })
     orders: Order[];
 
-
-    @OneToOne(() => Cart, cart => cart.user)
-    @JoinColumn()
+    @OneToOne(() => Cart, { cascade: ["remove"] })
+    @JoinColumn({name:"cart_id"})
     cart: Cart;
 
-    @OneToMany(() => Review, review => review.review, { cascade: ["remove"] })
+    @OneToMany(() => Review, review => review.user, { cascade: ["remove"] })
     review: Review[];
+
+    @OneToMany(() => Favorite, favorite => favorite.user, { cascade: ["remove"] })
+    favorites: Favorite[];
 }

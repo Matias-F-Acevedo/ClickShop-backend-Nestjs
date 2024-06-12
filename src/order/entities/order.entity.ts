@@ -21,6 +21,18 @@ export class Order {
     @Column()
     shippingAddress: string;
 
+    @Column()
+    city: string;
+
+    @Column()
+    province: string;
+
+    @Column()
+    postalCode: string;
+
+    @Column()
+    country: string;
+
     @Column({
         type: 'enum',
         enum: OrderStatus,
@@ -29,7 +41,7 @@ export class Order {
     status: OrderStatus;
 
     // ejemplo de numero max: 99999999.99
-    @Column({ type: 'decimal', precision: 10, scale: 2 }) 
+    @Column({ type: 'decimal', precision: 10, scale: 2 })
     total: number;
 
     @Column({ type: "datetime", default: () => "CURRENT_TIMESTAMP" })
@@ -37,13 +49,11 @@ export class Order {
 
     @ManyToOne(() => User, user => user.orders, {
         onDelete: "CASCADE"
-    }) 
-    @JoinColumn({ name: 'user_id' }) 
+    })
+    @JoinColumn({ name: 'user_id' })
     user: User;
 
-
-    
-    @OneToMany(() => OrderDetail, orderDetail => orderDetail.order, {cascade: ["remove"] })
+    @OneToMany(() => OrderDetail, orderDetail => orderDetail.order, { cascade: ["remove"] })
     orderDetail: OrderDetail[];
-     
+
 }
