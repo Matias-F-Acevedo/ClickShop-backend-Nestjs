@@ -33,13 +33,15 @@ export class CartController {
 
 
   @Put(':userId/items/:itemId/quantity')
-  updateCartItemQuantity(
+  async updateCartItemQuantity(
     @Param('userId') userId: number,
     @Param('itemId') itemId: number,
     @Body() updateCartItemQuantityDto: UpdateCartItemQuantityDto,
   ): Promise<CartItems | HttpException> {
+    console.log('Cantidad recibida:', updateCartItemQuantityDto.quantity); // Agregar este log
     return this.cartService.updateCartItemQuantity(userId, itemId, updateCartItemQuantityDto.quantity);
   }
+  
 
 
   @Delete(':userId/items/:itemId')

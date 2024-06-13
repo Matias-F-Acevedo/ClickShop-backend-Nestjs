@@ -10,6 +10,8 @@ import { Order } from 'src/order/entities/order.entity';
 import { OrderDetail } from 'src/order-details/entities/order-detail.entity';
 import { OrderStatus } from 'src/order/entities/order.entity';
 import { CreateAddressDto } from './dto/create-address.dto';
+import { ImagesService } from 'src/images/images.service';
+import { Result } from 'antd';
 
 @Injectable()
 export class CartService {
@@ -34,7 +36,32 @@ export class CartService {
       if (!cart) {
         return new HttpException('Cart not found', HttpStatus.NOT_FOUND);
       }
-      return this.cartItemsRepository.find({ where: { cart_id: cart.cart_id }, relations: ["product"] });
+      const cartItems = await this.cartItemsRepository.find({ where: { cart_id: cart.cart_id }, relations: ["product"] })
+      let result = [];
+      if (cartItems.length) {
+        result = await Promise.all(cartItems.map(async (cartItem) => {
+          delete (cartItem.product).isActive;
+          delete (cartItem.product).createdAt;
+          delete (cartItem.product).category_id;
+          delete (cartItem.product).condition;
+        
+          const imageProduct = await this.productsService.getProductImages(cartItem.product_id)
+
+          if (!(imageProduct instanceof HttpException)) {
+            return {...cartItem, product:{...cartItem.product,product_image: imageProduct.urlImage[0]}}
+          }
+          return cartItem;
+
+
+        }));
+      }
+
+      return result;
+      
+
+
+
+
     } catch (error) {
       throw new HttpException('Error getting cart items', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -102,36 +129,44 @@ export class CartService {
 
   async updateCartItemQuantity(userId: number, cartItemId: number, newQuantity: number): Promise<HttpException | CartItems> {
     try {
-      // verifico que exite el Cart:
+      // Verificar que se encuentre el Carrito y el elemento del Carrito
       const cartFound = await this.findOneByUserId(userId);
-
+  
       if (cartFound instanceof HttpException) {
-        return new HttpException('The cart does not exist', HttpStatus.NOT_FOUND);
+        return new HttpException('El carrito no existe', HttpStatus.NOT_FOUND);
       }
-
-
-
+  
       const cartItem = await this.cartItemsRepository.findOne({
         where: { cartItem_id: cartItemId },
       });
-
+  
       if (!cartItem) {
-        return new HttpException('The CartItems does not exist', HttpStatus.CONFLICT);
+        return new HttpException('El elemento del carrito no existe', HttpStatus.CONFLICT);
       }
-
+  
+      // Actualizar la cantidad y subtotal del elemento del carrito
       cartItem.quantity = newQuantity;
       cartItem.subtotal = cartItem.unitPrice * newQuantity;
+  
+      // Guardar la actualización en la base de datos
+      const updatedCartItem = await this.cartItemsRepository.save(cartItem);
+      console.log(updatedCartItem)
+      // Recalcular el total del carrito
+      await this.updateCartTotal(cartItem.cart_id);
+  
+      // Obtener el elemento del carrito actualizado de la base de datos
+      const cartItemAfterUpdate = await this.cartItemsRepository.findOne({
+        where: { cartItem_id: cartItemId },
+      });
 
-      const itemSaved = await this.cartItemsRepository.save(cartItem);
-
-      // recalcula el total del carrito:
-      const cartId = cartItem.cart_id;
-      await this.updateCartTotal(cartId);
-      return itemSaved
+    return cartItemAfterUpdate;
     } catch (error) {
-      return new HttpException('INTERNAL SERVER ERROR', HttpStatus.BAD_REQUEST);
+      console.error('Error al actualizar la cantidad del elemento del carrito:', error);
+      return new HttpException('Error interno del servidor', HttpStatus.BAD_REQUEST);
     }
   }
+  
+  
 
 
   async removeCartItem(userId: number, cartItemId: number): Promise<HttpException | CartItems> {
