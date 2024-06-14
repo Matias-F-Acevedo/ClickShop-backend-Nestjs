@@ -8,12 +8,13 @@ import { CartItems } from './entities/cart-items.entity';
 import { ProductsModule } from 'src/products/products.module';
 import { Order } from 'src/order/entities/order.entity';
 import { OrderDetail } from 'src/order-details/entities/order-detail.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 
 
 @Module({
   imports: [TypeOrmModule.forFeature([Cart,CartItems,Order,OrderDetail]),
-  UsersModule,ProductsModule,
+  UsersModule,ProductsModule, AuthModule
 ],
   controllers: [CartController],
   providers: [CartService],

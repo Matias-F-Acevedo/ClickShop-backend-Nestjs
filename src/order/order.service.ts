@@ -37,8 +37,8 @@ export class OrderService {
   async findAll(): Promise<HttpException | Order[]> {
     try {
       const orders = await this.orderRepository.find({
-        relations: ['orderDetail', 'orderDetail.product', 'user']});
-      return {...orders};
+        relations: ['orderDetail']});
+      return orders;
     } catch (error) {
       return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }

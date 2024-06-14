@@ -5,7 +5,6 @@ import { Favorite } from './entities/favorite.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { ProductsService } from 'src/products/products.service';
-import { ImagesService } from 'src/images/images.service';
 
 @Injectable()
 export class FavoritesService {
@@ -13,8 +12,6 @@ export class FavoritesService {
   constructor(@InjectRepository(Favorite) private favoriteRepository: Repository<Favorite>,
     private usersService: UsersService,
     private productsService: ProductsService,
-    private imageService: ImagesService,
-
   ) { }
 
   async findAllFavorites(userId: number): Promise<HttpException | any> {

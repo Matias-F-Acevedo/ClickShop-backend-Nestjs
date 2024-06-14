@@ -51,7 +51,7 @@ export class User {
     @OneToMany(() => Order, order => order.user, { cascade: ["remove"] })
     orders: Order[];
 
-    @OneToOne(() => Cart, { cascade: ["remove"] })
+    @OneToOne(() => Cart, { onDelete: 'CASCADE' })
     @JoinColumn({name:"cart_id"})
     cart: Cart;
 
