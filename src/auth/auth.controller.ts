@@ -2,12 +2,10 @@ import { Controller, Post, Body, Patch, HttpException, UseGuards} from '@nestjs/
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RequestResetPasswordDto } from './dto/request-reset-password.dto';
-import { User } from 'src/users/entities/user.entity';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { GetUser } from './get-user.decorator';
 import { AuthGuard } from './auth.guard';
-import { UserInterface } from 'src/users/interface/user.interface';
 
 @Controller('auth')
 export class AuthController {
