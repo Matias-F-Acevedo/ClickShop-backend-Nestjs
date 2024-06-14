@@ -22,30 +22,29 @@ export class ProductsService {
 
   async createProduct(createProductDto: CreateProductDto): Promise<HttpException | ProductInterface> {
     try {
-      const categoryFound = await this.categoryService.findOne(createProductDto.category_id)
-      if (categoryFound instanceof HttpException) {
-        return new HttpException('Category not found', HttpStatus.NOT_FOUND);
-      }
+        const categoryFound = await this.categoryService.findOne(createProductDto.category_id)
+        if (categoryFound instanceof HttpException) {
+            return new HttpException('Category not found', HttpStatus.NOT_FOUND);
+        }
+        const userFound = await this.userService.findOne(createProductDto.user_id)
+        if (userFound instanceof HttpException) {
+            return new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
 
-      const userFound = await this.userService.findOne(createProductDto.user_id)
-      if (userFound instanceof HttpException) {
-        return new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-
-      const newProduct = this.productRepository.create(createProductDto)
-      const saveProduct = await this.productRepository.save(newProduct)
-      delete (saveProduct).isActive;
-      delete (saveProduct).product_image;
-
-      return saveProduct;
+        const newProduct = this.productRepository.create(createProductDto)
+        const saveProduct = await this.productRepository.save(newProduct)
+        delete (saveProduct).isActive;
+        delete (saveProduct).product_image;
+  
+        return saveProduct;
 
     } catch (error) {
-      return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
+        return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+}
 
-  }
 
-
+ 
 
 
   async findAllProduct(): Promise<HttpException | ProductInterface[]> {
@@ -195,7 +194,7 @@ export class ProductsService {
 
       if (product.product_image == imageDefault) {
         const urlImage = await this.imageService.getPublicUrl(imageDefault);
-        return { productId, urlImage }
+        return { productId, urlImage:[`${urlImage}`] }
       }
 
       const images: string[] = await this.imageService.listFilesInFolder(product.product_image);
@@ -288,3 +287,4 @@ export class ProductsService {
   }
 
 }
+ 

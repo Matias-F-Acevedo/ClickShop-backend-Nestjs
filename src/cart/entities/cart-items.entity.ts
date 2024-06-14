@@ -1,17 +1,17 @@
-import { Order } from 'src/order/entities/order.entity';
+import { Cart } from 'src/cart/entities/cart.entity';
 import { Products } from 'src/products/entities/product.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn} from 'typeorm';
 
-@Entity()
-export class OrderDetail {
+@Entity("cart_items")
+export class CartItems {
 
     @PrimaryGeneratedColumn()
-    id: number;
+    cartItem_id: number;
 
     @Column()
-    order_id: number;
+    cart_id: number;
 
-    @Column() 
+    @Column()
     product_id: number;
 
     @Column()
@@ -23,11 +23,12 @@ export class OrderDetail {
     @Column({type: 'decimal', precision: 10, scale: 2})
     subtotal: number;
 
-    @ManyToOne(() => Order, order => order.orderDetail,{onDelete: "CASCADE"})
-    @JoinColumn({ name:'order_id'}) 
-    order: Order;
+    @ManyToOne(() => Cart, cart => cart.cartItems,{onDelete: "CASCADE"})
+    @JoinColumn({ name:'cart_id'}) 
+    cart: Cart;
 
-    @ManyToOne(() => Products)
+
+    @ManyToOne(() => Products, product => product.cartItems)
     @JoinColumn({ name: 'product_id' })
     product: Products;
 

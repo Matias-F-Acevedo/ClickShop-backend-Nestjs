@@ -8,6 +8,7 @@ import { UserInterface } from './interface/user.interface';
 import * as bcrypt from 'bcrypt';
 import { Products } from 'src/products/entities/product.entity';
 import { ImagesService } from 'src/images/images.service';
+import { Cart } from 'src/cart/entities/cart.entity';
 
 
 @Injectable()
@@ -18,6 +19,8 @@ export class UsersService {
     private userRepository: Repository<User>,
     @InjectRepository(Products)
     private readonly productRepository: Repository<Products>,
+    @InjectRepository(Cart)
+    private readonly cartRepository: Repository<Cart>,
     private imageService: ImagesService,
   ) { }
 
@@ -30,6 +33,12 @@ export class UsersService {
 
       const newUser = this.userRepository.create({ ...createUserDto, user_password: bcrypt.hashSync(createUserDto.user_password, 8) });
       const newUserSave = await this.userRepository.save(newUser)
+
+      const cart = this.cartRepository.create({ user: newUser });
+      await this.cartRepository.save(cart);
+
+      newUser.cart_id = cart.cart_id;
+      await this.userRepository.save(newUser);
 
       const userWithoutPassword = { ...newUserSave };
       delete (userWithoutPassword).user_password;
@@ -68,7 +77,7 @@ export class UsersService {
   async findOne(id: number): Promise<HttpException | UserInterface> {
 
     try {
-      const user = await this.userRepository.findOne({ where: { user_id: id }, relations: ["cart"] });
+      const user = await this.userRepository.findOne({ where: { user_id: id } });
       if (!user) {
         return new HttpException('User does not exist', HttpStatus.NOT_FOUND);
       };
@@ -112,6 +121,9 @@ export class UsersService {
       delete (userWithoutPassword).user_password;
       delete (userWithoutPassword).reset_password_token;
       delete (userWithoutPassword).user_image;
+      delete (userWithoutPassword).user_createdAt;
+      delete (userWithoutPassword).cart_id;
+
       return userWithoutPassword;
 
     } catch (error) {

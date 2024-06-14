@@ -4,7 +4,6 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { CategoryModule } from './category/category.module';
-import { CartModule } from './cart/cart.module';
 import { OrderModule } from './order/order.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
 import { ReviewModule } from './review/review.module';
@@ -13,10 +12,13 @@ import { ImagesModule } from './images/images.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FirebaseModule } from './firebase/firebase.module';
 import configuration from 'config/configuration';
+import { CartModule } from './cart/cart.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 
 @Module({
   imports: [
+
     ConfigModule.forRoot({
       envFilePath: './env/.env',
       load: [configuration],
@@ -55,8 +57,8 @@ import configuration from 'config/configuration';
     AuthModule,
     OrderModule,
     OrderDetailsModule,
-    ReviewModule, CategoryModule, CartModule, ProductsModule, FirebaseModule, ImagesModule
+    ReviewModule, CategoryModule,ProductsModule,CartModule,FirebaseModule, ImagesModule, FavoritesModule
   ],
 })
 export class AppModule { }
-
+ 
