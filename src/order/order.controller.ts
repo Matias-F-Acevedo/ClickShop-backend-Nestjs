@@ -21,17 +21,11 @@ export class OrderController {
   @Get()
   findAll(@Query('userId') user_id?: number): Promise<HttpException | Order[]> {
 
-    try {
-      if (!user_id) {
-        return this.orderService.findAll();
-      }
-
+    if (user_id) {
       return this.orderService.findAllByUserId(user_id);
-
-    } catch (error) {
-      throw new NotFoundException("Not found")
     }
 
+    return this.orderService.findAll();
   }
 
   @UseGuards(AuthGuard)
@@ -52,7 +46,7 @@ export class OrderController {
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<HttpException | Order> {
     return this.orderService.update(+id, updateOrderDto);
   }
-  
+
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<HttpException | Order> {

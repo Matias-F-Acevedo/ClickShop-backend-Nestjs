@@ -19,15 +19,11 @@ export class ReviewController {
 
   @Get()
   findAll(@Query('productId') productId?: number): Promise<HttpException | Review[]> {
-    try {
-      if (!productId) {
-        return this.reviewService.findAll();
-      }
-      return this.reviewService.findAllByProductId(productId);
 
-    } catch (error) {
-      throw new NotFoundException("Not found")
+    if (!productId) {
+      return this.reviewService.findAll();
     }
+    return this.reviewService.findAllByProductId(productId);
   }
 
 
@@ -41,7 +37,7 @@ export class ReviewController {
   update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto): Promise<HttpException | Review> {
     return this.reviewService.update(+id, updateReviewDto);
   }
-  
+
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<HttpException | Review> {
