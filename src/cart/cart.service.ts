@@ -10,6 +10,7 @@ import { Order } from 'src/order/entities/order.entity';
 import { OrderDetail } from 'src/order-details/entities/order-detail.entity';
 import { OrderStatus } from 'src/order/entities/order.entity';
 import { CreateAddressDto } from './dto/create-address.dto';
+import { CartItemsInterface } from './interface/cartItems.interface';
 
 @Injectable()
 export class CartService {
@@ -28,7 +29,7 @@ export class CartService {
 
 
 
-  async getAllCartItems(userId: number): Promise<HttpException | CartItems[]> {
+  async getAllCartItems(userId: number): Promise<HttpException | CartItemsInterface []> {
     try {
       const cart = await this.cartRepository.findOne({ where: { user_id: userId } });
       if (!cart) {
@@ -60,7 +61,7 @@ export class CartService {
 
 
 
-  async addItemToCart(userId: number, createCartItemsDto: CreateCartItemsDto): Promise<HttpException | CartItems> {
+  async addItemToCart(userId: number, createCartItemsDto: CreateCartItemsDto): Promise<HttpException | CartItemsInterface > {
 
     try {
       // verifico que exite el cart:
@@ -92,15 +93,13 @@ export class CartService {
 
 
     } catch (error) {
-      console.log(error);
-
       return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
   }
 
 
-  async updateCartItemQuantity(userId: number, cartItemId: number, newQuantity: number): Promise<HttpException | CartItems> {
+  async updateCartItemQuantity(userId: number, cartItemId: number, newQuantity: number): Promise<HttpException | CartItemsInterface > {
     try {
       // verifico que exite el Cart:
       const cartFound = await this.findOneByUserId(userId);
@@ -134,7 +133,7 @@ export class CartService {
   }
 
 
-  async removeCartItem(userId: number, cartItemId: number): Promise<HttpException | CartItems> {
+  async removeCartItem(userId: number, cartItemId: number): Promise<HttpException | CartItemsInterface > {
 
     try {
       // verifico que exite el Cart:
@@ -160,12 +159,12 @@ export class CartService {
       return cartItem;
     } catch (error) {
 
-      throw new HttpException('Error removing cart item', HttpStatus.INTERNAL_SERVER_ERROR);
+      return new HttpException('Error removing cart item', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
 
-  async removeAllCartItem(userId: number): Promise<HttpException | CartItems[]> {
+  async removeAllCartItem(userId: number): Promise<HttpException | CartItemsInterface []> {
     try {
       const cart = await this.cartRepository.findOne({ where: { user_id: userId } });
 
@@ -178,13 +177,13 @@ export class CartService {
       return itemsDeleted;
 
     } catch (error) {
-      throw new HttpException('Error clearing cart', HttpStatus.INTERNAL_SERVER_ERROR);
+      return new HttpException('Error clearing cart', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
 
 
-  private async updateCartTotal(cartId: number): Promise<HttpException | void> {
+   async updateCartTotal(cartId: number): Promise<HttpException | void> {
     try {
       const cartItems = await this.cartItemsRepository.find({ where: { cart_id: cartId } });
 
@@ -202,7 +201,7 @@ export class CartService {
     try {
       const cart = await this.cartRepository.findOne({ where: { user_id: userId }, relations: ['cartItems'] });
       if (!cart) {
-        throw new HttpException('Cart not found', HttpStatus.NOT_FOUND);
+        return new HttpException('Cart not found', HttpStatus.NOT_FOUND);
       }
       // creo una orden
       const order = new Order();
@@ -235,7 +234,6 @@ export class CartService {
       this.removeAllCartItem(userId);
       return order;
     } catch (error) {
-      console.log(error);
       throw new HttpException('Error checking out', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

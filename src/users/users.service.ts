@@ -36,6 +36,7 @@ export class UsersService {
       const newUserSave = await this.userRepository.save(newUser)
 
       const cart = this.cartRepository.create({ user: newUser });
+      
       await this.cartRepository.save(cart);
 
       newUser.cart_id = cart.cart_id;

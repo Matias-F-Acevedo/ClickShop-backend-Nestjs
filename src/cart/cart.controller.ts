@@ -7,6 +7,7 @@ import { CreateAddressDto } from './dto/create-address.dto';
 import { CartItems } from './entities/cart-items.entity';
 import { Order } from 'src/order/entities/order.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { CartItemsInterface } from './interface/cartItems.interface';
 
 
 
@@ -16,7 +17,7 @@ export class CartController {
 
   @UseGuards(AuthGuard)
   @Post(':userId')
-  create(@Param('userId') userId: string, @Body() createCartItemsDto: CreateCartItemsDto): Promise<CartItems | HttpException> {
+  create(@Param('userId') userId: string, @Body() createCartItemsDto: CreateCartItemsDto): Promise<CartItemsInterface | HttpException> {
     return this.cartService.addItemToCart(+userId, createCartItemsDto);
   }
 
@@ -28,7 +29,7 @@ export class CartController {
 
   @UseGuards(AuthGuard)
   @Get(':userId/items')
-  getAllCartItems(@Param('userId') userId: string): Promise<HttpException | CartItems[]>{
+  getAllCartItems(@Param('userId') userId: string): Promise<HttpException | CartItemsInterface[]>{
     return this.cartService.getAllCartItems(+userId);
   }
 
@@ -38,7 +39,7 @@ export class CartController {
     @Param('userId') userId: number,
     @Param('itemId') itemId: number,
     @Body() updateCartItemQuantityDto: UpdateCartItemQuantityDto,
-  ): Promise<CartItems | HttpException> {
+  ): Promise<CartItemsInterface | HttpException> {
     return this.cartService.updateCartItemQuantity(userId, itemId, updateCartItemQuantityDto.quantity);
   }
 
@@ -47,7 +48,7 @@ export class CartController {
   removeCartItem(
     @Param('userId') userId: number,
     @Param('itemId') itemId: number,
-  ): Promise<HttpException | CartItems> {
+  ): Promise<HttpException | CartItemsInterface> {
     return this.cartService.removeCartItem(userId, itemId);
   }
 
@@ -55,7 +56,7 @@ export class CartController {
   @Delete(':userId')
   removeAllCartItem(
     @Param('userId') userId: number,
-  ): Promise<HttpException | CartItems[]> {
+  ): Promise<HttpException | CartItemsInterface[]> {
     return this.cartService.removeAllCartItem(userId);
   }
 
