@@ -5,11 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Favorite } from './entities/favorite.entity';
 import { UsersModule } from 'src/users/users.module';
 import { ProductsModule } from 'src/products/products.module';
+import { ImagesModule } from 'src/images/images.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Favorite]),
   UsersModule,
-  ProductsModule],
+  ProductsModule,ImagesModule, AuthModule],
   controllers: [FavoritesController],
   providers: [FavoritesService],
 })

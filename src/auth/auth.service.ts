@@ -25,7 +25,7 @@ export class AuthService {
     const user = await this.userService.findUserByEmail(email);
 
     if (!(user instanceof User)) {
-      return new HttpException('User does not exist', HttpStatus.NOT_FOUND);
+      throw new HttpException('User does not exist', HttpStatus.NOT_FOUND);
     }
 
     if (!bcrypt.compareSync(password, user.user_password)) {
