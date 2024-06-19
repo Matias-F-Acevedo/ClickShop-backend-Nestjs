@@ -34,6 +34,8 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "firebase-admin": "^12.1.1",
+    "helmet-csp": "^4.0.0",
+    "mercadopago": "^2.0.9",
     "mysql2": "^3.9.2",
     "nodemailer": "^6.9.13",
     "reflect-metadata": "^0.2.0",

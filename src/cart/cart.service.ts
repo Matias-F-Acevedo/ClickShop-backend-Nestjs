@@ -270,9 +270,10 @@ export class CartService {
       this.removeAllCartItem(userId);
       return order;
     } catch (error) {
-      console.log(error);
+      console.log("error",error);
       throw new HttpException('Error checking out', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
 }
+ 

@@ -14,6 +14,7 @@ import { FirebaseModule } from './firebase/firebase.module';
 import configuration from 'config/configuration';
 import { CartModule } from './cart/cart.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
 
 
 @Module({
@@ -57,8 +58,10 @@ import { FavoritesModule } from './favorites/favorites.module';
     AuthModule,
     OrderModule,
     OrderDetailsModule,
-    ReviewModule, CategoryModule,ProductsModule,CartModule,FirebaseModule, ImagesModule, FavoritesModule
+    ReviewModule, CategoryModule,ProductsModule,CartModule,FirebaseModule, ImagesModule, FavoritesModule, MercadoPagoModule
   ],
 })
 export class AppModule { }
  
+
+
