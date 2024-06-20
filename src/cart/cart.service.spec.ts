@@ -10,7 +10,7 @@ import { ProductsService } from 'src/products/products.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CreateCartItemsDto } from './dto/create-cart-items.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
-import { Products } from 'src/products/entities/product.entity';
+import { ProductCondition, Products } from 'src/products/entities/product.entity';
 
 describe('CartService', () => {
   let service: CartService;
@@ -44,6 +44,7 @@ describe('CartService', () => {
           provide: ProductsService,
           useValue: {
             findOne: jest.fn(),
+            getProductImages: jest.fn(),
           },
         },
       ],
@@ -61,13 +62,31 @@ describe('CartService', () => {
     it('should return cart items if cart exists', async () => {
       const userId = 1;
       const cart = { cart_id: 1 } as Cart;
-      const cartItems = [{ product: {} }] as CartItems[];
+      const cartItems = [
+        { 
+          cartItem_id: 1,
+          cart_id: 1,
+          product_id: 1,
+          quantity: 1,
+          product: { isActive: true, createdAt: new Date(), category_id: 1, condition: ProductCondition.NEW, productId: 1 } 
+        }
+      ] as CartItems[];
+
+      const mockImageProduct = {productId: 1 ,urlImage: ['http://image-url.com/image1.jpg'] };
 
       jest.spyOn(cartRepository, 'findOne').mockResolvedValue(cart);
       jest.spyOn(cartItemsRepository, 'find').mockResolvedValue(cartItems);
+      jest.spyOn(productsService, 'getProductImages').mockResolvedValue(mockImageProduct);
 
       const result = await service.getAllCartItems(userId);
-      expect(result).toEqual(cartItems);
+      const expectedCartItem = {
+        ...cartItems[0],
+        product: {
+          productId: 1,
+          product_image: mockImageProduct.urlImage[0]
+        }
+      };
+      expect(result).toEqual([expectedCartItem]);
     });
 
     it('should return HttpException if cart does not exist', async () => {
@@ -79,7 +98,45 @@ describe('CartService', () => {
       expect(result).toBeInstanceOf(HttpException);
       expect((result as HttpException).getStatus()).toBe(HttpStatus.NOT_FOUND);
     });
+
+    it('should handle HttpException from getProductImages', async () => {
+      const userId = 1;
+      const cart = { cart_id: 1 } as Cart;
+      const cartItems = [
+        { 
+          cartItem_id: 1,
+          cart_id: 1,
+          product_id: 1,
+          quantity: 1,
+          product: { isActive: true, createdAt: new Date(), category_id: 1, condition: ProductCondition.NEW, productId: 1 } 
+        }
+      ] as CartItems[];
+
+      jest.spyOn(cartRepository, 'findOne').mockResolvedValue(cart);
+      jest.spyOn(cartItemsRepository, 'find').mockResolvedValue(cartItems);
+      jest.spyOn(productsService, 'getProductImages').mockResolvedValue(new HttpException('Image not found', HttpStatus.NOT_FOUND));
+
+      const result = await service.getAllCartItems(userId);
+      const expectedCartItem = {
+        ...cartItems[0],
+        product: {
+          productId: 1
+          // no hay product_image porque getProductImages devolvio un error
+        }
+      };
+      expect(result).toEqual([expectedCartItem]);
+    });
+
+    it('should throw HttpException if an error occurs', async () => {
+      const userId = 1;
+
+      jest.spyOn(cartRepository, 'findOne').mockRejectedValue(new Error('Database error'));
+
+      await expect(service.getAllCartItems(userId)).rejects.toThrow(HttpException);
+      await expect(service.getAllCartItems(userId)).rejects.toThrow('Error getting cart items');
+    });
   });
+
 
   describe('findOneByUserId', () => {
     it('should return the cart if it exists', async () => {

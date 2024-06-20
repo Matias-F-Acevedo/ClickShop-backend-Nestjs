@@ -1,4 +1,3 @@
-// mercado-pago.service.ts
 import { Injectable } from '@nestjs/common';
 import { MercadoPagoConfig, Preference } from 'mercadopago';
 

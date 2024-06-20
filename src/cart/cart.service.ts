@@ -10,8 +10,6 @@ import { Order } from 'src/order/entities/order.entity';
 import { OrderDetail } from 'src/order-details/entities/order-detail.entity';
 import { OrderStatus } from 'src/order/entities/order.entity';
 import { CreateAddressDto } from './dto/create-address.dto';
-import { ImagesService } from 'src/images/images.service';
-import { Result } from 'antd';
 import { CartItemsInterface } from './interface/cartItems.interface';
 
 @Injectable()
