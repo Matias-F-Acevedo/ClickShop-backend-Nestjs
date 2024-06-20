@@ -1,5 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete,HttpException, Put, UseGuards, } from '@nestjs/common';
 import { CartService } from './cart.service';
+import { Cart } from './entities/cart.entity'; 
+import { UpdateCartDto } from './dto/update-cart.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CartInterface } from './interface/cart.interface';
 import { CreateCartItemsDto } from './dto/create-cart-items.dto';
 import { UpdateCartItemQuantityDto } from './dto/update-cart-item-quantity.dto';
@@ -10,7 +13,8 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CartItemsInterface } from './interface/cartItems.interface';
 
 
-
+@ApiTags('carts')
+@ApiBearerAuth()
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) { }
@@ -19,6 +23,7 @@ export class CartController {
   @Post(':userId')
   create(@Param('userId') userId: string, @Body() createCartItemsDto: CreateCartItemsDto): Promise<CartItemsInterface | HttpException> {
     return this.cartService.addItemToCart(+userId, createCartItemsDto);
+
   }
 
   @UseGuards(AuthGuard)

@@ -3,10 +3,13 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RequestResetPasswordDto } from './dto/request-reset-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { GetUser } from './get-user.decorator';
 import { AuthGuard } from './auth.guard';
 
+
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -17,12 +20,13 @@ export class AuthController {
   }
 
 
+  @ApiBearerAuth()
   @Patch("/request-reset-password")
   async requestResetPassword(@Body() requestResetPasswordDto: RequestResetPasswordDto):Promise<HttpException | {message:string}>{
     return this.authService.requestResetPassword(requestResetPasswordDto)
   }
   
-
+  @ApiBearerAuth()
   @Patch("/reset-password")
   async resetPassword(@Body()resetPasswordDto: ResetPasswordDto):Promise<HttpException | {message:string}>{
       return this.authService.resetPassword(resetPasswordDto)

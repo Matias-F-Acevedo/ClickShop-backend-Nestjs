@@ -2,14 +2,20 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpEx
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Products } from './entities/product.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductInterface } from './interface/product.interface';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
+
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() CreateProductDto: CreateProductDto): Promise<HttpException | ProductInterface> {
@@ -30,12 +36,16 @@ export class ProductsController {
     return this.productsService.findOne(id_prod);
   }
 
+
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id_prod')
   updateProduct(@Param('id_prod') id_prod: number, @Body() updateProductDto: UpdateProductDto): Promise<HttpException | ProductInterface> {
     return this.productsService.updateProduct(id_prod, updateProductDto);
   }
 
+
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id_prod')
   removeProduct(@Param('id_prod') id: number): Promise<HttpException | ProductInterface> {

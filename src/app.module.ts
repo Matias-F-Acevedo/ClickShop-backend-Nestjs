@@ -58,7 +58,14 @@ import { MercadoPagoModule } from './mercado-pago/mercado-pago.module';
     AuthModule,
     OrderModule,
     OrderDetailsModule,
-    ReviewModule, CategoryModule,ProductsModule,CartModule,FirebaseModule, ImagesModule, FavoritesModule, MercadoPagoModule
+    ReviewModule, 
+    CategoryModule,
+    ProductsModule,
+    CartModule,
+    FirebaseModule,
+    ImagesModule, 
+    FavoritesModule, 
+    MercadoPagoModule
   ],
 })
 export class AppModule { }
