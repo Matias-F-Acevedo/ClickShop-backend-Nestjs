@@ -32,9 +32,11 @@ export class UsersService {
       if (userFound) throw new Error("This email is registered");
 
       const newUser = this.userRepository.create({ ...createUserDto, user_password: bcrypt.hashSync(createUserDto.user_password, 8) });
+      
       const newUserSave = await this.userRepository.save(newUser)
 
       const cart = this.cartRepository.create({ user: newUser });
+      
       await this.cartRepository.save(cart);
 
       newUser.cart_id = cart.cart_id;

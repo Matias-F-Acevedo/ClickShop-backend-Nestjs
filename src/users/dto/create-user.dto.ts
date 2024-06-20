@@ -1,6 +1,5 @@
 import { Expose } from 'class-transformer';
-import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { Products } from 'src/products/entities/product.entity';
+import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
 
 
 export class CreateUserDto {
@@ -45,10 +44,5 @@ export class CreateUserDto {
     @MinLength(8)
     @MaxLength(30)
     user_password: string;
-
-
-    @Expose()
-    @IsOptional()
-    product: Products[];
 
 }
