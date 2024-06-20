@@ -1,10 +1,16 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { MercadoPagoService } from './mercado-pago.service';
+import {ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@ApiTags('mercado-pago')
+@ApiBearerAuth()
 @Controller('mercado-pago')
 export class MercadoPagoController {
   constructor(private readonly mercadoPagoService: MercadoPagoService) {}
 
+
+  @UseGuards(AuthGuard)
   @Post('create-preference')
   async createPreference(@Body() items: any[]): Promise<any> {
     try {

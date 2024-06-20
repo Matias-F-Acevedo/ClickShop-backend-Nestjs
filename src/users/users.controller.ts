@@ -9,7 +9,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 
 @ApiTags('users')
-@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
@@ -22,42 +21,42 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
     
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get()
   findAll(): Promise<UserInterface[] | HttpException> {
     return this.usersService.findAll();
   }
     
-  
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string): Promise<HttpException | UserInterface> {
     return this.usersService.findOne(+id);
   }
 
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<HttpException | UserInterface> {
     return this.usersService.update(+id, updateUserDto);
   }
 
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<HttpException | UserInterface> {
     return this.usersService.remove(+id);
   }
 
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Get(':userId/profile-image')
   getProfileImage(@Param('userId') userId: string): Promise<HttpException | {userId: number; urlImage: string;}>{
     return this.usersService.getProfileImage(+userId);
   }
 
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post(':userId/profile-image')
   @UseInterceptors(FileInterceptor('file'))
@@ -66,7 +65,7 @@ export class UsersController {
     return imageUrl;
   }
 
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':userId/profile-image')
   deleteProfileImage(@Param('userId') userId: string): Promise<HttpException | { userId: number; message: string; }>{

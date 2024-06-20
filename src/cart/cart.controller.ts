@@ -1,19 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,HttpException, Put, UseGuards, } from '@nestjs/common';
+import { Controller, Get, Post, Body,Param, Delete,HttpException, Put, UseGuards, } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { Cart } from './entities/cart.entity'; 
-import { UpdateCartDto } from './dto/update-cart.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CartInterface } from './interface/cart.interface';
 import { CreateCartItemsDto } from './dto/create-cart-items.dto';
 import { UpdateCartItemQuantityDto } from './dto/update-cart-item-quantity.dto';
 import { CreateAddressDto } from './dto/create-address.dto';
-import { CartItems } from './entities/cart-items.entity';
 import { Order } from 'src/order/entities/order.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { CartItemsInterface } from './interface/cartItems.interface';
 
 
-@ApiTags('carts')
+@ApiTags('cart')
 @ApiBearerAuth()
 @Controller('cart')
 export class CartController {

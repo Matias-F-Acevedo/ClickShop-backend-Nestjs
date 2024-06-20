@@ -45,6 +45,5 @@ export class CategoryController {
   @Delete(':id')
   async remove(@Param('id', ParseIntPipe) id: string) {
     return await this.categoryService.remove(+id);
-
   }
 }

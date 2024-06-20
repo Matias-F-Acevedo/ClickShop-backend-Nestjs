@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(
-    new ValidationPipe({ 
+    new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
     })
@@ -17,8 +17,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const config = new DocumentBuilder()
-    .setTitle("ClickShop")
-    .setDescription("ClickShop API description")
+    .setTitle("ClickShop API")
+    .setDescription("La API de ClickShop Backend es el núcleo del proyecto de e-commerce ClickShop, encargada de manejar toda la lógica del negocio y la comunicación con la base de datos. Esta API está desarrollada utilizando NestJS, un potente framework de Node.js diseñado para construir aplicaciones del lado del servidor de manera escalable y eficiente.")
     .setVersion("1.0.0")
     .addBearerAuth()
     .build();

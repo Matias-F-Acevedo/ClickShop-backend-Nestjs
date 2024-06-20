@@ -57,6 +57,7 @@ export class ProductsController {
     return this.productsService.getProductImages(+productId);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post(':productId/images')
   @UseInterceptors(FileInterceptor("file"))
@@ -64,7 +65,8 @@ export class ProductsController {
     const imageUrl = await this.productsService.uploadProductImage(+productId, file);
     return imageUrl;
   }
-
+  
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':productId/images')
   deleteProductImages(@Param('productId') productId: string): Promise<HttpException | { productId: number; message: string; }> {

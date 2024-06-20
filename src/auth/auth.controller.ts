@@ -20,13 +20,13 @@ export class AuthController {
   }
 
 
-  @ApiBearerAuth()
+
   @Patch("/request-reset-password")
   async requestResetPassword(@Body() requestResetPasswordDto: RequestResetPasswordDto):Promise<HttpException | {message:string}>{
     return this.authService.requestResetPassword(requestResetPasswordDto)
   }
   
-  @ApiBearerAuth()
+
   @Patch("/reset-password")
   async resetPassword(@Body()resetPasswordDto: ResetPasswordDto):Promise<HttpException | {message:string}>{
       return this.authService.resetPassword(resetPasswordDto)
@@ -34,7 +34,7 @@ export class AuthController {
 
 
   // con el decorador @GetUser, obtengo el usaurio de la request y lo inyecto en el metodo. Se obtiene el user decifrando el token.
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch("/change-password")
   async changePassword(@Body()changePasswordDto: ChangePasswordDto, @GetUser() user): Promise<HttpException | { message: string }>{
