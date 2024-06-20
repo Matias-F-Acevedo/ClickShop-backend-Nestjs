@@ -11,7 +11,7 @@ export class OrderDetail {
     @Column()
     order_id: number;
 
-    @Column()
+    @Column() 
     product_id: number;
 
     @Column()
@@ -27,9 +27,8 @@ export class OrderDetail {
     @JoinColumn({ name:'order_id'}) 
     order: Order;
 
- 
-    @OneToOne(()=> Products)
-    @JoinColumn({name:'product_id'})
-    product:Products
+    @ManyToOne(() => Products)
+    @JoinColumn({ name: 'product_id' })
+    product: Products;
 
 }

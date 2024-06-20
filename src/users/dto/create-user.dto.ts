@@ -45,7 +45,4 @@ export class CreateUserDto {
     @MaxLength(30)
     user_password: string;
 
-  
-
-
 }

@@ -26,8 +26,7 @@ export class Review {
 
     @ManyToOne(() => Products, product => product.review)
     @JoinColumn({ name: 'product_id' }) 
-    review: Review;
-
+    product: Products;
 
     @ManyToOne(() => User, user => user.review,{onDelete: "CASCADE"})
     @JoinColumn({ name: 'user_id' }) 

@@ -1,13 +1,15 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { jwtConstants } from "./constants";
 import { Request } from "express";
+import { ConfigService } from "@nestjs/config";
 
 
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService) { }
+    constructor(private jwtService: JwtService,
+        private configService: ConfigService,
+    ) { }
 
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -28,7 +30,7 @@ export class AuthGuard implements CanActivate {
         }
 
         try {
-            const payload = await this.jwtService.verifyAsync(token, { secret: jwtConstants.secret, });
+            const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get<string>('config.jwt_secret'), });
             // request["user"] = payload: Si la verificación del token es exitosa, el objeto payload (que parece contener la información del usuario asociado al token JWT) se asigna al objeto de solicitud request. Esto significa que cualquier controlador de ruta que tenga acceso a la solicitud (como los controladores de NestJS) podrá acceder a los datos del usuario a través de request["user"].
             request["user"] = payload;
 

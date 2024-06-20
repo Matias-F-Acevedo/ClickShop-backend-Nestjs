@@ -1,50 +1,77 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,HttpException, Put, UseGuards, } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { Cart } from './entities/cart.entity'; 
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CartInterface } from './interface/cart.interface';
+import { CreateCartItemsDto } from './dto/create-cart-items.dto';
+import { UpdateCartItemQuantityDto } from './dto/update-cart-item-quantity.dto';
+import { CreateAddressDto } from './dto/create-address.dto';
+import { CartItems } from './entities/cart-items.entity';
+import { Order } from 'src/order/entities/order.entity';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { CartItemsInterface } from './interface/cartItems.interface';
+
 
 @ApiTags('carts')
 @ApiBearerAuth()
-@Controller('carts') 
-export class CartController { 
-  constructor(private cartService: CartService) {}
-  @Post()
-  createCart(@Body("userId") userId: number): Promise<Cart>  {
-    return this.cartService.createCart(userId); 
+@Controller('cart')
+export class CartController {
+  constructor(private readonly cartService: CartService) { }
+
+  @UseGuards(AuthGuard)
+  @Post(':userId')
+  create(@Param('userId') userId: string, @Body() createCartItemsDto: CreateCartItemsDto): Promise<CartItemsInterface | HttpException> {
+    return this.cartService.addItemToCart(+userId, createCartItemsDto);
+
   }
 
-  @Get()
-  getCarts(): Promise<Cart[]> { 
-    
-    return this.cartService.getCarts(); 
+  @UseGuards(AuthGuard)
+  @Get(':userId')
+  findOneByUserId(@Param('userId') userId: string): Promise<HttpException | CartInterface> {
+    return this.cartService.findOneByUserId(+userId);
   }
 
-  @Get(':id')
-  async getById(@Param('id', ParseIntPipe) id: number) {
-    const cart = await this.cartService.getCartById(id); 
-    if (!cart) {
-      throw new NotFoundException('Cart not found'); 
-    }
-    return cart; 
+  @UseGuards(AuthGuard)
+  @Get(':userId/items')
+  getAllCartItems(@Param('userId') userId: string): Promise<HttpException | CartItemsInterface[]>{
+    return this.cartService.getAllCartItems(+userId);
   }
 
-  @Put(':userId/update')
-  async update(@Param('userId', ParseIntPipe) userId: number, @Body() updateCartDto: UpdateCartDto) {
-    try {
-      const updatedCart = await this.cartService.updateCart(userId, updateCartDto.newProductId);
-      return updatedCart;
-    } catch (error) {
-      throw new NotFoundException(error.message);
-    }
+  @UseGuards(AuthGuard)
+  @Put(':userId/items/:itemId/quantity')
+  async updateCartItemQuantity(
+    @Param('userId') userId: number,
+    @Param('itemId') itemId: number,
+    @Body() updateCartItemQuantityDto: UpdateCartItemQuantityDto,
+  ): Promise<CartItemsInterface | HttpException> {
+    return this.cartService.updateCartItemQuantity(userId, itemId, updateCartItemQuantityDto.quantity);
+  }
+  
+
+  @UseGuards(AuthGuard)
+  @Delete(':userId/items/:itemId')
+  removeCartItem(
+    @Param('userId') userId: number,
+    @Param('itemId') itemId: number,
+  ): Promise<HttpException | CartItemsInterface> {
+    return this.cartService.removeCartItem(userId, itemId);
   }
 
-  @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    const deletedCart = await this.cartService.deleteCart(id); 
-    if (!deletedCart) {
-      throw new NotFoundException('Cart not found'); 
-    }
-    return deletedCart; 
+  @UseGuards(AuthGuard)
+  @Delete(':userId')
+  removeAllCartItem(
+    @Param('userId') userId: number,
+  ): Promise<HttpException | CartItemsInterface[]> {
+    return this.cartService.removeAllCartItem(userId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post(':userId/checkout')
+  async checkout(@Param('userId') userId: string,@Body() createAddressDto: CreateAddressDto): Promise<{message:string ,order:Order | HttpException}>{
+      const order = await this.cartService.checkout(+userId, createAddressDto);
+      return { message: 'Order placed successfully', order};
   }
 }
+
+ 
