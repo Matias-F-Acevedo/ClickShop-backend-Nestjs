@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { MercadoPagoService } from './mercado-pago.service';
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { ConfigService } from '@nestjs/config';
+import { Preference, MercadoPagoConfig } from 'mercadopago';
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { ItemDto } from './dto/create-item.dto';
 
 jest.mock('mercadopago', () => {
   const mPreference = {
@@ -18,22 +21,27 @@ describe('MercadoPagoService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MercadoPagoService],
+      providers: [
+        MercadoPagoService,
+        ConfigService,
+      ],
     }).compile();
 
     service = module.get<MercadoPagoService>(MercadoPagoService);
+    const configService = module.get<ConfigService>(ConfigService);
+
+    jest.spyOn(configService, 'get').mockReturnValue('TEST-ACCESS-TOKEN');
 
     const mercadoPagoConfig = new MercadoPagoConfig({
-      accessToken: 'TEST-2205321052646983-031401-2694b3d7dc2293be7c162bec2fee429e-1725358919',
+      accessToken: configService.get<string>('config.mercadoPago_access_token'),
     });
-
 
     mockPreference = new Preference(mercadoPagoConfig) as any;
   });
 
   describe('createPreference', () => {
     it('should create a preference and return the response', async () => {
-      const items = [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }];
+      const items: ItemDto[] = [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }];
       const mockResponse = { id: 'preference123', items };
 
       mockPreference.create.mockResolvedValue(mockResponse);
@@ -41,18 +49,21 @@ describe('MercadoPagoService', () => {
       const result = await service.createPreference(items);
 
       expect(mockPreference.create).toHaveBeenCalledWith({
-        body: { items: items },
+        body: { items },
       });
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual({ preference: mockResponse });
     });
 
     it('should throw an error if createPreference fails', async () => {
-      const items = [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }];
+      const items: ItemDto[] = [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }];
       const errorMessage = 'Error creating preference';
 
       mockPreference.create.mockRejectedValue(new Error(errorMessage));
 
-      await expect(service.createPreference(items)).rejects.toThrow(errorMessage);
+      const result = await service.createPreference(items)
+
+      expect(result).toBeInstanceOf(HttpException);
+      expect(result).toHaveProperty('status', HttpStatus.INTERNAL_SERVER_ERROR);
     });
   });
 });

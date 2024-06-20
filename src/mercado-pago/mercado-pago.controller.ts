@@ -1,7 +1,9 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
 import { MercadoPagoService } from './mercado-pago.service';
 import {ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ItemsArrayDto } from './dto/items-array.dto';
+import { PreferenceResponse } from 'mercadopago/dist/clients/preference/commonTypes';
 
 @ApiTags('mercado-pago')
 @ApiBearerAuth()
@@ -12,12 +14,7 @@ export class MercadoPagoController {
 
   @UseGuards(AuthGuard)
   @Post('create-preference')
-  async createPreference(@Body() items: any[]): Promise<any> {
-    try {
-      const preference = await this.mercadoPagoService.createPreference(items);
-      return { preference: preference };
-    } catch (error) {
-      throw new Error(`Error al crear preferencia en el controlador: ${error.message}`);
-    }
+  async createPreference(@Body() itemsArrayDto: ItemsArrayDto): Promise<{preference: PreferenceResponse} | HttpException> {
+    return await this.mercadoPagoService.createPreference(itemsArrayDto.items);
   }
 }

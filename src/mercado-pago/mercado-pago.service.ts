@@ -1,31 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { ItemDto } from './dto/create-item.dto';
+import { PreferenceResponse } from 'mercadopago/dist/clients/preference/commonTypes';
 
 @Injectable()
 export class MercadoPagoService {
   private client: MercadoPagoConfig;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
+
     this.client = new MercadoPagoConfig({
-      accessToken: 'TEST-2205321052646983-031401-2694b3d7dc2293be7c162bec2fee429e-1725358919'
+      accessToken: this.configService.get<string>('config.mercadoPago_access_token')
     });
   }
 
-  async createPreference(items: any[]): Promise<any> {
-    const preference = new Preference(this.client);
-
+  async createPreference(items: ItemDto[]): Promise<{preference: PreferenceResponse} | HttpException> {
     try {
+      const preference = new Preference(this.client);
       const response = await preference.create({
         body: {
           items: items,
         },
       });
-
-      
-
-      return response;
+      return { preference: response };
     } catch (error) {
-      throw new Error(error.message);
+      return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  } 
+  }
 }
