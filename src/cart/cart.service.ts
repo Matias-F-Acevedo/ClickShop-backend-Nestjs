@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
@@ -26,7 +26,6 @@ export class CartService {
     private readonly orderDetailRepository: Repository<OrderDetail>,
     private productsService: ProductsService,
   ) { }
-
 
 
   async getAllCartItems(userId: number): Promise<HttpException | CartItemsInterface []> {
@@ -146,8 +145,7 @@ export class CartService {
       cartItem.subtotal = cartItem.unitPrice * newQuantity;
   
       // Guardar la actualización en la base de datos
-      const updatedCartItem = await this.cartItemsRepository.save(cartItem);
-      console.log(updatedCartItem)
+      await this.cartItemsRepository.save(cartItem);
       // Recalcular el total del carrito
       await this.updateCartTotal(cartItem.cart_id);
   
@@ -158,7 +156,6 @@ export class CartService {
 
     return cartItemAfterUpdate;
     } catch (error) {
-      console.error('Error al actualizar la cantidad del elemento del carrito:', error);
       return new HttpException('Error interno del servidor', HttpStatus.BAD_REQUEST);
     }
   }
