@@ -38,7 +38,6 @@ export class CartService {
       let result = [];
       if (cartItems.length) {
         result = await Promise.all(cartItems.map(async (cartItem) => {
-          delete (cartItem.product).isActive;
           delete (cartItem.product).createdAt;
           delete (cartItem.product).category_id;
           delete (cartItem.product).condition;
