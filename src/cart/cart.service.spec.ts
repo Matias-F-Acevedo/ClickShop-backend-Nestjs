@@ -83,6 +83,7 @@ describe('CartService', () => {
         ...cartItems[0],
         product: {
           productId: 1,
+          isActive: true,
           product_image: mockImageProduct.urlImage[0]
         }
       };
@@ -120,7 +121,8 @@ describe('CartService', () => {
       const expectedCartItem = {
         ...cartItems[0],
         product: {
-          productId: 1
+          productId: 1,
+          isActive: true
           // no hay product_image porque getProductImages devolvio un error
         }
       };
