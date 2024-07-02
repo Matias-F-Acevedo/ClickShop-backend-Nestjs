@@ -41,7 +41,7 @@ describe('MercadoPagoService', () => {
 
   describe('createPreference', () => {
     it('should create a preference and return the response', async () => {
-      const items: ItemDto[] = [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }];
+      const items: ItemDto[] = [{ id: '123', title: 'Product 1', quantity: 1, unit_price: 100 }];
       const mockResponse = { id: 'preference123', items };
 
       mockPreference.create.mockResolvedValue(mockResponse);
@@ -55,7 +55,7 @@ describe('MercadoPagoService', () => {
     });
 
     it('should throw an error if createPreference fails', async () => {
-      const items: ItemDto[] = [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }];
+      const items: ItemDto[] = [{ id: '123', title: 'Product 1', quantity: 1, unit_price: 100 }];
       const errorMessage = 'Error creating preference';
 
       mockPreference.create.mockRejectedValue(new Error(errorMessage));

@@ -456,7 +456,7 @@ describe('CartService', () => {
 
 
       expect(result).toBeInstanceOf(HttpException);
-      expect(result).toHaveProperty('message', 'Cart not found');
+      expect(result).toHaveProperty('message', 'Cart or items not found');
       expect(result).toHaveProperty('status', HttpStatus.NOT_FOUND);
     });
 
@@ -485,20 +485,22 @@ describe('CartService', () => {
     it('should update the total of the cart successfully', async () => {
       const cartId = 1;
       const cartItems = [
-        { subtotal: 100 },
-        { subtotal: 200 },
+        { subtotal: 100, quantity: 2 },
+        { subtotal: 200, quantity: 3 },
       ] as CartItems[];
+    
       const total = cartItems.reduce((sum, item) => sum + (+item.subtotal), 0);
-
+      const quantityTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    
       jest.spyOn(cartItemsRepository, 'find').mockResolvedValue(cartItems);
       const updateSpy = jest.spyOn(cartRepository, 'update').mockResolvedValue(undefined);
-
+    
       await service.updateCartTotal(cartId);
-
+    
       expect(cartItemsRepository.find).toHaveBeenCalledWith({ where: { cart_id: cartId } });
-      expect(updateSpy).toHaveBeenCalledWith(cartId, { total });
+      expect(updateSpy).toHaveBeenCalledWith(cartId, { total, quantityTotal });
     });
-
+    
     it('should throw HttpException if an error occurs when retrieving cart items', async () => {
       const cartId = 1;
 
