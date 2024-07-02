@@ -3,10 +3,13 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RequestResetPasswordDto } from './dto/request-reset-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { GetUser } from './get-user.decorator';
 import { AuthGuard } from './auth.guard';
 
+
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -15,6 +18,7 @@ export class AuthController {
   login(@Body()loginDto: LoginDto) {
     return this.authService.login(loginDto.email, loginDto.password)
   }
+
 
 
   @Patch("/request-reset-password")
@@ -30,7 +34,7 @@ export class AuthController {
 
 
   // con el decorador @GetUser, obtengo el usaurio de la request y lo inyecto en el metodo. Se obtiene el user decifrando el token.
-
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch("/change-password")
   async changePassword(@Body()changePasswordDto: ChangePasswordDto, @GetUser() user): Promise<HttpException | { message: string }>{

@@ -92,6 +92,7 @@ export class OrderService {
             product: {
               product_name: detail.product.product_name,
               product_image: detail.product.product_image,
+              isActive: detail.product.isActive
             }
           })),
           user: {

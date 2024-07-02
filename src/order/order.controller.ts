@@ -3,8 +3,12 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { Order } from './entities/order.entity';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+
+@ApiTags('order')
+@ApiBearerAuth()
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) { }
@@ -21,17 +25,11 @@ export class OrderController {
   @Get()
   findAll(@Query('userId') user_id?: number): Promise<HttpException | Order[]> {
 
-    try {
-      if (!user_id) {
-        return this.orderService.findAll();
-      }
-
+    if (user_id) {
       return this.orderService.findAllByUserId(user_id);
-
-    } catch (error) {
-      throw new NotFoundException("Not found")
     }
 
+    return this.orderService.findAll();
   }
 
   @UseGuards(AuthGuard)
@@ -52,7 +50,7 @@ export class OrderController {
   update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto): Promise<HttpException | Order> {
     return this.orderService.update(+id, updateOrderDto);
   }
-  
+
   @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string): Promise<HttpException | Order> {
