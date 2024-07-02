@@ -211,60 +211,69 @@ export class CartService {
 
 
 
-   async updateCartTotal(cartId: number): Promise<HttpException | void> {
+  async updateCartTotal(cartId: number): Promise<HttpException | void> {
     try {
-      const cartItems = await this.cartItemsRepository.find({ where: { cart_id: cartId } });
+        const cartItems = await this.cartItemsRepository.find({ where: { cart_id: cartId } });
 
-      const total = cartItems.reduce((sum, item) => sum + (+item.subtotal), 0);
+        const total = cartItems.reduce((sum, item) => sum + (+item.subtotal), 0);
+        const quantityTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-      await this.cartRepository.update(cartId, { total });
+        await this.cartRepository.update(cartId, { total, quantityTotal});
     } catch (error) {
-
-      throw new HttpException('error updating cart total', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException('error updating cart total', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
+}
 
 
-  async checkout(userId: number, createAddressDto: CreateAddressDto): Promise<HttpException | Order> {
-    try {
-      const cart = await this.cartRepository.findOne({ where: { user_id: userId }, relations: ['cartItems'] });
-      if (!cart) {
-        return new HttpException('Cart not found', HttpStatus.NOT_FOUND);
+async checkout(userId: number, createAddressDto: CreateAddressDto, cartItems?: CartItems[]): Promise<HttpException | Order> {
+  try {
+      let cart = await this.cartRepository.findOne({ where: { user_id: userId }, relations: ['cartItems'] });
+      
+      if (!cart && (!cartItems || cartItems.length === 0)) {
+          return new HttpException('Cart or items not found', HttpStatus.NOT_FOUND);
       }
-      // creo una orden
+
+      // Create an order
       const order = new Order();
       order.user_id = userId;
       order.total = 0;
       order.status = OrderStatus.PENDING;
       order.shippingAddress = createAddressDto.shippingAddress;
-      order.city =createAddressDto.city;
-      order.province=createAddressDto.province;
-      order.postalCode= createAddressDto.postalCode;
-      order.country= createAddressDto.country;
+      order.city = createAddressDto.city;
+      order.province = createAddressDto.province;
+      order.postalCode = createAddressDto.postalCode;
+      order.country = createAddressDto.country;
       order.date = new Date();
       await this.orderRepository.save(order);
 
-      // creo los detalles de orden para cada producto en el carrito
-      for (const cartItem of cart.cartItems) {
-        const orderDetail = new OrderDetail();
-        orderDetail.order = order;
-        orderDetail.product_id = cartItem.product_id;
-        orderDetail.quantity = cartItem.quantity;
-        orderDetail.unitPrice = cartItem.unitPrice;
-        orderDetail.subtotal = +cartItem.subtotal;
-        await this.orderDetailRepository.save(orderDetail);
-        order.total += orderDetail.subtotal;
+      const itemsToProcess = cartItems || cart.cartItems;
+
+      // Create order details for each product in the cart or provided items
+      for (const item of itemsToProcess) {
+          const orderDetail = new OrderDetail();
+          orderDetail.order = order;
+          orderDetail.product_id = item.product_id;
+          orderDetail.quantity = item.quantity;
+          orderDetail.unitPrice = item.unitPrice;
+          orderDetail.subtotal = +item.subtotal;
+          await this.orderDetailRepository.save(orderDetail);
+          order.total += orderDetail.subtotal;
       }
-      // guardo nuevamente, ya que el total lo calcule despues de crear la order (necesito una order para tener un orderDetails).
+
+      // Save order again to update the total
       await this.orderRepository.save(order);
 
-      // eliminar todos los items del carrito
-      this.removeAllCartItem(userId);
+      // Remove all items from the cart if not processing directly provided items
+      if (!cartItems) {
+          this.removeAllCartItem(userId);
+      }
+
       return order;
-    } catch (error) {
+  } catch (error) {
       throw new HttpException('Error checking out', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
+}
+
 
 }
  

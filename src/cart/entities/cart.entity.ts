@@ -15,6 +15,9 @@ export class Cart {
     @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 }) 
     total: number;
 
+    @Column({ type: 'int', default: 0 })
+    quantityTotal: number;
+
     @OneToOne(() => User, user => user.cart, {
         onDelete: "CASCADE"
     }) 
@@ -23,5 +26,4 @@ export class Cart {
 
     @OneToMany(() => CartItems, cartItems => cartItems.cart, {cascade: ["remove"] })
     cartItems: CartItems[];
-     
 }

@@ -15,9 +15,9 @@ export class ItemDto {
   @IsPositive()
   quantity: number;
 
-  @IsNotEmpty()
-  @IsString()
-  currency_id: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // currency_id: string;
 
   @IsNotEmpty()
   @IsNumber()
