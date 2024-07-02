@@ -33,7 +33,7 @@ describe('MercadoPagoController', () => {
 
   describe('createPreference', () => {
     it('should create a preference and return it', async () => {
-      const itemsArrayDto: ItemsArrayDto = { items: [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }] };
+      const itemsArrayDto: ItemsArrayDto = { items: [{ id: '123', title: 'Product 1', quantity: 1, unit_price: 100 }] };
       const mockPreference  = { id: 'preference123', items: itemsArrayDto.items} as PreferenceResponse;
 
       jest.spyOn(service, 'createPreference').mockResolvedValue({preference: mockPreference});
@@ -45,7 +45,7 @@ describe('MercadoPagoController', () => {
     });
 
     it('should throw an error if createPreference fails', async () => {
-      const itemsArrayDto: ItemsArrayDto = { items: [{ id: '123', title: 'Product 1', quantity: 1, currency_id: 'ARS', unit_price: 100 }] };
+      const itemsArrayDto: ItemsArrayDto = { items: [{ id: '123', title: 'Product 1', quantity: 1, unit_price: 100 }] };
 
       jest.spyOn(service, 'createPreference').mockImplementation(async () => { return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR) });
      
