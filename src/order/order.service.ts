@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { UsersService } from 'src/users/users.service';
+import { ProductsService } from 'src/products/products.service';
 
 
 @Injectable()
@@ -66,7 +67,7 @@ export class OrderService {
     try {
       const orders = await this.orderRepository.find({
         where:{user_id: user_id},
-        relations: ['orderDetail']
+        relations: ['orderDetail','orderDetail.product']
       });
       return orders;
     } catch (error) {
