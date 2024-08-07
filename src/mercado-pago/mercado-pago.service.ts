@@ -20,9 +20,13 @@ export class MercadoPagoService {
       const response = await preference.create({
         body: {
           items: items,
+          back_urls:{
+            success:"http://localhost:5173/orders-user",
+            failure:"http://localhost:5173/orders-user",
+            pending:"http://localhost:5173/orders-user"
+          }
         },
       });
-
       return { preference: response };
     } catch (error) {
       return new HttpException('INTERNAL SERVER ERROR', HttpStatus.INTERNAL_SERVER_ERROR);
